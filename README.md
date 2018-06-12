@@ -1,3 +1,5 @@
+[Take a look of deployed app here](https://bnsmarket-demo.herokuapp.com/)
+
 To start server please run following code in command line under this directory
 ```
 npm install

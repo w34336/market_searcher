@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>HomePage</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+</head>
+<body>
+  <nav class="menu_bar">
+    <ul>
+      <li id="userfile"><a>
+        <form action="/user/<%= user._id %>?_method=DELETE" method="post"><input type="image" id="logoutimg"
+          src="/logout.png"></form>
+        </a></li>
+        <li id="userfile"><a><img id="userimg" src="/user.png"><%= user.username %></a></li>
+        <li id="search"><a href="/user/<%= user._id %>/search"><img id="searchimg" src="/search.png">Search Favourite Items</a>
+        </li>
+        <li id="tracking"><a href="/user/<%= user._id %>/tracking"><img id="trackimg" src="/track.png">Check Tracking Items</a>
+        </li>
+        <li id="pricealert"><a href="/user/<%= user._id %>/pricealert"><img id="tagimg" src="/tag.png">Set Price Alert</a>
+        </li>
+      </ul>
+    </nav>
+
+
+    <div class ="search_section">
+      <div class ="form" id='flag_mainpart'>
+        <h1>Market Searcher</h1>
+        <Text>Enter an item name below</Text>
+        <br/>
+        <input value='Soulstone' id='searchbar' type='text'>
+        <button class ="function_button" id='search_button' onclick=ev()>Search</button>
+
+      </div>
+
+      <div class="form" id='flag_mainpart2'>
+        <ul class='result'>
+        </ul>
+      </div>
+
+      <div class="form" id='show_listing'>
+        <table id='listing'>
+        </table>
+      </div>
+
+
+
+    </div>
+  </body>
+
+  <script
+  src='https://code.jquery.com/jquery-3.2.1.min.js'
+  integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
+  crossorigin='anonymous'></script>
+  <script src='/Utils.js'></script>
+  <script>
+  function ev(){
+
+          cleanup_table();
+
+          $.ajax({
+              type:'GET',
+              url: 'https://api.silveress.ie/bns/v3/market/na/current/all',
+              success: function(data){
+                  var flag = 0
+                  if ($('#searchbar').val() == '') {
+                    alert('Please enter an item name')
+                    exit()
+                  }
+                  $.each(data,function(i,item){
+                    if (item.name.toLowerCase().replace(/\s/g, '') == $('#searchbar').val().toLowerCase().replace(/\s/g, '')) {
+                      addImg(item.id)
+                      $('.result').empty()
+                      $('<p>')
+                      .text(item.name + ' Price: ' + gsc(item.listings[0].each))
+                      .appendTo('.result')
+                      createButton(item.name, 'Add')
+                      createButton('_all', 'Show All listings')
+
+                      document.getElementById("flag_mainpart2").style.visibility  = "visible";
+
+                      $( '#_all' ).click(function(){
+                          cleanup_table();
+                          console.log('clicked')
+                          $.each(data, function(i, item) {
+                            if (item.name.toLowerCase().replace(/\s/g, '') == $('#searchbar').val().toLowerCase().replace(/\s/g, '')) {
+                              console.log(JSON.stringify(item.listings, null, 3)+ ' found')
+
+                              let evt_table = document.getElementById("listing");
+                              createTable("Index", "Counting", "Total Price", "Each Item Price", evt_table)
+
+                              $.each(item.listings, function(j, listing) {
+                                let k = j + 1
+                                let price = gsc(listing.price);
+                                let each = gsc(listing.each);
+                                createTable(k, listing.count, price, each, evt_table)
+                              })
+
+                            document.getElementById("show_listing").style.visibility  = "visible";
+                            }
+                            else {
+                              console.log('failed')
+                            }
+                          })
+
+                        })
+
+                      $( '[id="' + item.name + '"]' ).click(function(){
+                        // Backend: place code for add function here
+                        curr_user = getUser()
+                        addTracking(curr_user, item.id)
+                      })
+                      flag = 1
+                    }
+                  })
+                  if (flag != 1) {
+                    alert('Oops, we cannot find the item you are looking for or it is not available on marketplace right now.')
+                  }
+
+              }
+          });
+  }
+
+
+  function addTracking(user, itemId) {
+
+    console.log('itemId: ' + itemId)
+    fetch('/user/<%= user.id %>/tracking', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        objectid: itemId
+      })
+    })
+      .then(() => {
+        alert('Add tracking success')
+      })
+  }
+  </script>
+  </html>

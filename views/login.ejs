@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>Login in</title>
+        <link rel="stylesheet" type="text/css" href="../style.css">
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+
+    </head>
+    <body>
+
+  
+
+        <form action="/login" method="post">      
+            <div class="form">
+
+                <p id="notion"></p>
+
+                Email Address: <br>
+                <input type="text" placeholder="you@xxxx.com" name="email" id="email_id"><img id="email_error" src ="/close.png" ><br><br>
+                Password: <br>
+                <input type="password" placeholder="********" name="password" id="password_id"><img id="password_error" src ="/close.png"><br><br><br>
+
+                <button class="function_button" id="submit_button_1" type="submit">Login</button><br><br><br>
+
+                Don't have a account? <a href="/signin">Sign Up</a> Now!!<br><br>
+
+            </div>
+     
+        </form>
+
+
+    <script type="text/javascript">
+
+        if (<%= flag.checkerror %> == true){
+            document.getElementById("email_id").style.borderColor = "red";
+            document.getElementById("password_id").style.borderColor = "red";
+            document.getElementById("email_error").style.visibility = "visible";
+            document.getElementById("password_error").style.visibility = "visible";
+            document.getElementById("notion").innerHTML = "<span style='color:#FF0000'> Your Email or Password is Wrong<br/> Please Try Again </span>";
+        }
+
+        var id_list = ["email_id", "password_id"];
+
+        for (i = 0; i< id_list.length; i++){
+            
+            document.getElementById(id_list[i]).addEventListener("click", function(){
+                document.getElementById("email_id").style.border = "1px solid #ccc";
+                document.getElementById("password_id").style.border = "1px solid #ccc";
+                document.getElementById("email_error").style.visibility = "hidden";
+                document.getElementById("password_error").style.visibility = "hidden";
+                document.getElementById("notion").innerHTML = "";
+            })
+        }
+
+
+        
+
+
+
+    </script>    
+
+    </body>
+      
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>HomePage</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+
+<body>
+
+<nav class="menu_bar">
+  <ul>
+    <li id="userfile">
+      <a>
+        <form action="/user/<%= user._id %>?_method=DELETE" method="post">
+          <input type="image" id="logoutimg" src="/logout.png">
+        </form>
+      </a>
+    </li>
+    <li id="userfile">
+      <a>
+        <img id="userimg" src="/user.png">
+        <%= user.username %>
+      </a>
+    </li>
+    <li id="search">
+      <a href="/user/<%= user._id %>/search">
+        <img id="searchimg" src="/search.png">Search Favourite Items</a>
+    </li>
+    <li id="tracking">
+      <a href="/user/<%= user._id %>/tracking">
+        <img id="trackimg" src="/track.png">Check Tracking Items</a>
+    </li>
+    <li id="pricealert">
+      <a href="/user/<%= user._id %>/pricealert">
+        <img id="tagimg" src="/tag.png">Set Price Alert</a>
+    </li>
+  </ul>
+</nav>
+
+<div class="container">
+  <h1>Your alert List</h1>
+  <div class="row" style="overflow-x: auto">
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Target Price</th>
+        <th>Cancel Alert</th>
+      </tr>
+      </thead>
+      <tbody id="J_Body">
+      <% user.price_alert_items.forEach(function(item){ %>
+      <tr>
+        <td>
+          <%= item.name %>
+        </td>
+        <td>
+          <%= item.aim_price %>
+        </td>
+        <td>
+          <button onclick="deleteAlert(<%= JSON.stringify(item) %>)" type="button" class="btn btn-danger">Cancel Alert</button>
+        </td>
+      </tr>
+      <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+  <h1>Item List</h1>
+  <div class="row" style="overflow-x: auto">
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Current Price</th>
+        <th>Set Alert</th>
+      </tr
+      </thead>
+      <tbody id="J_Body">
+      <% list.forEach(function(item){ %>
+        <tr>
+          <td>
+            <img src="<%= item.img %>" alt="<%= item.name %>">
+          </td>
+          <td>
+            <%= item.name %>
+          </td>
+          <td><%= item.listings[0].price  %></td>
+          <td>
+            <button onclick="addAlert(<%= JSON.stringify(item) %>)" type="button" class="btn btn-danger">Set Alert</button>
+          </td>
+
+        </tr>
+      <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  function addAlert (item) {
+
+    const aimPrice = parseInt(window.prompt('Input your aim price'))
+    if (Number.isNaN(aimPrice)) {
+      alert('Input is invalid')
+      return
+    }
+
+    if (aimPrice > item.listings[0].price) {
+      alert('Price should lower than selected good price')
+      return
+    }
+
+    fetch('/user/<%= user.id %>/pricealert', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        objectid: item.id,
+        aim_price: aimPrice,
+        name: item.name
+      })
+    })
+      .then(res => res.json())
+      .then(json => {
+        if (json.message === 'success') {
+          alert('Add alert success')
+          location.reload()
+        } else {
+          alert(json.message)
+        }
+      })
+  }
+  function deleteAlert (item) {
+    fetch('/user/<%= user.id %>/pricealert', {
+      method: 'DELETE',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        objectid: item.objectid
+      })
+    })
+      .then(() => {
+        alert('Cancel alert success')
+        location.reload()
+      })
+  }
+</script>
+<script src='/Utils.js'></script>
+  <div>Icons made by
+    <a href="http://www.freepik.com" title="Freepik">Freepik</a> from
+    <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+    is licensed by
+    <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+  </div>
+
+</body>
+</html>

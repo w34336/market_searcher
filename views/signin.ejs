@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>Sign In For A New Account</title>
+        <link rel="stylesheet" type="text/css" href="../style.css">
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+
+    </head>
+    <body>
+
+        <form class="signin_login" action="/signin" method="POST">
+            <div class="form">
+
+                <p id="notion"></p>
+
+                UserName to Display: <br>
+                <input type="text" placeholder="Kevin Liang" name="username" id="username_id"><img id="username_error" src ="/close.png" ><br><br>
+<!--                 <input type="text" placeholder="Last Name" name="Last Name">
+                <input type="text" placeholder="First Name" name="First Name"><br>
+                <input type="text" placeholder="Date of Birth" name="Date of Birth"><br> -->
+                Email Address(Used For Login): <br>
+                <input type="text" placeholder="you@xxxx.com" name="email" id="email_id"><img id="email_error" src ="/close.png" ><br><br>
+                Password(*+ and bracket are exclusive): <br>
+                <input type="password" placeholder="********" name="password" id="password_id"><img id="password_error" src ="/close.png" ><br><br><br>
+                <!-- <input type="text" placeholder="Repeated Password" name="Repeated Password"><br> -->
+
+                <button class="function_button" id="submit_button_1" type="submit">Sign Up</button><br><br><br>
+
+
+                Already have a account?  <a href="/login">Login</a><br/>
+                <a href="/">Return to HomePage</a>
+            </div>
+        </form>
+
+
+        <script type="text/javascript">
+
+        if (<%= flag.checkerror %> == true){
+            document.getElementById("username_id").style.borderColor = "red";
+            document.getElementById("email_id").style.borderColor = "red";
+            document.getElementById("password_id").style.borderColor = "red";
+            document.getElementById("username_error").style.visibility = "visible";
+            document.getElementById("email_error").style.visibility = "visible";
+            document.getElementById("password_error").style.visibility = "visible";
+
+            if (<%= flag.miss %> == true){
+                document.getElementById("notion").innerHTML = "<span style='color:#FF0000'> Missing Blanks</span>";
+
+            }
+
+            if (<%= flag.repeated %> == true){
+                document.getElementById("notion").innerHTML = "<span style='color:#FF0000'> This Email is already used</span>";
+            }
+
+        }
+
+        var id_list = ["email_id", "password_id", "username_id"];
+
+        for (i = 0; i< id_list.length; i++){
+
+            document.getElementById(id_list[i]).addEventListener("click", function(){
+                document.getElementById("username_id").style.border = "1px solid #ccc";
+                document.getElementById("email_id").style.border = "1px solid #ccc";
+                document.getElementById("password_id").style.border = "1px solid #ccc";
+                document.getElementById("username_error").style.visibility = "hidden";
+                document.getElementById("email_error").style.visibility = "hidden";
+                document.getElementById("password_error").style.visibility = "hidden";
+                document.getElementById("notion").innerHTML = "";
+            })
+        }
+
+
+    </script>
+
+    </body>
+
+</html>

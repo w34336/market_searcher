@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Check Tracking Items</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+</head>
+<body>
+  <nav class="menu_bar">
+    <ul>
+      <li id="userfile"><a>
+        <form action="/user/<%= user._id %>?_method=DELETE" method="post"><input type="image" id="logoutimg"
+          src="/logout.png"></form>
+        </a></li>
+        <li id="userfile"><a><img id="userimg" src="/user.png"><%= user.username %></a></li>
+        <li id="search"><a href="/user/<%= user._id %>/search"><img id="searchimg" src="/search.png">Search Favourite Items</a>
+        </li>
+        <li id="tracking"><a href="/user/<%= user._id %>/tracking"><img id="trackimg" src="/track.png">Check Tracking Items</a>
+        </li>
+        <li id="pricealert"><a href="/user/<%= user._id %>/pricealert"><img id="tagimg" src="/tag.png">Set Price Alert</a>
+        </li>
+      </ul>
+    </nav>
+
+
+    <div class="form" id='show_listing'>
+        <table id='listing'>
+        </table>
+    </div>
+
+
+
+
+
+
+
+    <script
+      src='https://code.jquery.com/jquery-3.2.1.min.js'
+      integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
+      crossorigin='anonymous'>
+    </script>
+    <script src='/Utils.js'></script>
+    <script>
+
+
+
+
+      function findItem() {
+
+        var list = [<%= user.tracking_items %>]
+        console.log(list)
+
+        let evt_table = document.getElementById("listing");
+        let evt_div = document.getElementById("show_listing").style.visibility = "visible";
+
+        createTable("Name", "Amount", "Price", "", evt_table)
+
+        for (var i = 0; i < list.length; i++) {
+            let itemId = list[i].toString()
+
+            $.ajax({
+            type:'GET',
+            url: 'https://api.silveress.ie/bns/v3/market/na/current/' + itemId,
+            success: function(data){
+
+                $.each(data, function(index, item){
+
+                  var cheapest_item = item.listings[0]
+                  var item_name = item.name;
+                  var item_price = cheapest_item.each
+                  var item_amount = cheapest_item.count
+
+                  var del_form = document.createElement("form");
+                  del_form.setAttribute('action',"/user/<%= user._id %>/tracking/" + item.id + "?_method=DELETE");
+                  del_form.setAttribute('method',"post");
+
+                  var i = document.createElement("input"); //input element, text
+                  i.setAttribute('type',"submit");
+                  i.setAttribute('value',"Delete");
+                  i.setAttribute('class', 'function_button');
+
+                  del_form.appendChild(i);
+
+                  createTable2(item_name, item_amount, gsc(item_price), del_form, evt_table)
+
+                })
+
+            }
+          });
+        }
+      }
+
+
+      window.onload = findItem();
+
+    </script>
+
+
+
+
+
+  </body>
+
+
+
+  </html>

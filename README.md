@@ -1,4 +1,4 @@
-To start server please run following code in command line under `assignment-3-dice-2` directory
+To start server please run following code in command line under this directory
 ```
 npm install
 node server.js
